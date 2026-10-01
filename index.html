@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SPLIT2D® — Character Split Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0b;
+  --bg2:#111113;
+  --cream:#f2efe9;
+  --muted:#9b978e;
+  --muted2:#6b6965;
+  --line:rgba(242,239,233,.1);
+  --accent:#c8a96a;
+  --accent-soft:rgba(200,169,106,.14);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--cream);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--cream);color:#000}
+/* noise */
+.noise{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(800px 500px at 20% 0%,rgba(200,169,106,.12),transparent 60%),radial-gradient(900px 600px at 90% 30%,rgba(120,110,255,.08),transparent 60%),radial-gradient(700px 500px at 50% 100%,rgba(200,169,106,.06),transparent 60%)}
+.lines{position:fixed;inset:0 5vw;z-index:0;pointer-events:none;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.lines::after{content:'';position:absolute;inset:0;border-left:1px solid var(--line);border-right:1px solid var(--line);margin:0 25%}
+
+/* NAV */
+nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:min(1160px,92vw);z-index:50;display:flex;justify-content:space-between;align-items:center;padding:12px 12px 12px 24px;background:rgba(14,14,16,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--line);border-radius:100px}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.5px}
+.logo sup{font-size:10px;color:var(--accent)}
+.menu{display:flex;gap:28px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.menu a{color:inherit;text-decoration:none;transition:.3s}
+.menu a:hover{color:var(--cream)}
+.cta{background:var(--cream);color:#000;border:none;padding:11px 22px;border-radius:100px;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:.02em;transition:.35s cubic-bezier(.16,1,.3,1)}
+.cta:hover{background:var(--accent);transform:scale(1.04)}
+@media(max-width:760px){.menu{display:none}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:150px 5vw 40px;position:relative;z-index:1;max-width:1300px;margin:0 auto}
+.eyebrow{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:28px}
+.eyebrow::before{content:'';width:36px;height:1px;background:var(--accent);display:inline-block}
+.eyebrow i{font-style:normal;color:var(--accent);border:1px solid rgba(200,169,106,.3);padding:4px 12px;border-radius:100px;background:var(--accent-soft)}
+
+/* SPLIT CORE — refined */
+.split2d{display:flex;flex-wrap:wrap;line-height:.88;font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.04em}
+.hero-big{font-size:clamp(72px,15vw,198px)}
+.char2d{position:relative;display:inline-block;width:.71em;height:.98em;cursor:pointer}
+.char2d .half{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.char2d .top{clip-path:inset(-5% -5% 50% -5%)}
+.char2d .bottom{clip-path:inset(50% -5% -5% -5%);color:transparent;-webkit-text-stroke:1px rgba(242,239,233,.55);transition:transform .7s cubic-bezier(.16,1,.3,1),-webkit-text-stroke .4s}
+.char2d:hover .top{transform:translateY(-9%);color:var(--accent)}
+.char2d:hover .bottom{transform:translateY(9%);-webkit-text-stroke:1px var(--accent)}
+.char2d.wave .top{animation:wt 4s ease-in-out infinite}
+.char2d.wave .bottom{animation:wb 4s ease-in-out infinite}
+@keyframes wt{0%,100%{transform:translateY(0)}50%{transform:translateY(-5%)}}
+@keyframes wb{0%,100%{transform:translateY(0)}50%{transform:translateY(5%)}}
+.space{width:.32em}
+.serif{font-family:'Instrument Serif',serif;font-weight:400;font-style:italic;letter-spacing:-.03em;color:var(--accent)}
+.hero-row{display:flex;align-items:flex-end;gap:3vw;flex-wrap:wrap}
+.hero-sub{max-width:380px;margin-left:auto;padding-bottom:12px}
+.hero-sub p{color:var(--muted);font-size:15px;line-height:1.7}
+.hero-sub p b{color:var(--cream);font-weight:500}
+.hero-actions{display:flex;gap:12px;margin-top:22px}
+.btn-p{background:var(--cream);color:#000;border:none;padding:15px 30px;border-radius:100px;font-weight:600;font-size:14px;cursor:pointer;transition:.35s}
+.btn-p:hover{background:var(--accent);transform:translateY(-2px)}
+.btn-s{background:transparent;color:var(--cream);border:1px solid var(--line);padding:15px 30px;border-radius:100px;font-size:14px;cursor:pointer;transition:.35s}
+.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+.hero-meta{display:flex;border-top:1px solid var(--line);margin-top:70px;padding-top:26px;gap:40px;flex-wrap:wrap;font-size:13px;color:var(--muted2);letter-spacing:.06em}
+.hero-meta span b{color:var(--cream);font-weight:500}
+
+/* strip */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 5vw;display:flex;gap:48px;justify-content:space-between;align-items:center;overflow:hidden;white-space:nowrap;font-size:12px;letter-spacing:.28em;color:var(--muted2);text-transform:uppercase;position:relative;z-index:1;background:rgba(255,255,255,.01)}
+.strip b{color:var(--muted);font-weight:500}
+
+/* SECTION */
+section{padding:110px 5vw;max-width:1300px;margin:0 auto;position:relative;z-index:1}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:10px}
+.sec-num{font-size:12px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase}
+.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(36px,5.5vw,68px);letter-spacing:-.03em;line-height:.95;margin-top:14px}
+.sec-title em{font-family:'Instrument Serif',serif;font-weight:400;font-style:italic;color:var(--accent);letter-spacing:-.02em}
+.sec-desc{color:var(--muted);max-width:360px;font-size:15px;line-height:1.7}
+
+/* LIST ROWS — premium instead of cheap cards */
+.rows{margin-top:50px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:70px 1fr auto;gap:24px;align-items:center;padding:34px 10px;border-bottom:1px solid var(--line);transition:.45s cubic-bezier(.16,1,.3,1);cursor:pointer;position:relative}
+.row:hover{background:rgba(242,239,233,.025);padding-left:24px;padding-right:24px}
+.row small{font-size:13px;color:var(--muted2);letter-spacing:.15em}
+.row h3{font-family:'Syne',sans-serif;font-size:clamp(20px,2.5vw,28px);letter-spacing:-.02em;margin-bottom:6px}
+.row p{color:var(--muted);font-size:14px}
+.row .preview{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(34px,4vw,58px);display:flex;letter-spacing:-.03em}
+.row .arrow{width:48px;height:48px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.4s}
+.row:hover .arrow{background:var(--cream);color:#000;border-color:var(--cream);transform:rotate(-45deg)}
+.m2 .char2d:hover .top{transform:translateX(-12%)}
+.m2 .char2d:hover .bottom{transform:translateX(12%)}
+.m3 .char2d .top{color:var(--cream)}
+.m3 .char2d:hover .top{transform:translateY(-10%) rotate(-3deg)}
+.m3 .char2d:hover .bottom{transform:translateY(10%) rotate(3deg)}
+.m4 .char2d .bottom{color:transparent;-webkit-text-stroke:1px var(--accent)}
+.m4 .char2d:hover .top{text-shadow:2px 0 rgba(120,180,255,.8)}
+.m4 .char2d:hover .bottom{text-shadow:-2px 0 rgba(200,169,106,.8)}
+
+/* PLAYGROUND — luxury panel */
+.panel{margin-top:48px;background:linear-gradient(180deg,#151517,#0e0e10);border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,48px);display:grid;grid-template-columns:1.2fr .8fr;gap:32px}
+@media(max-width:900px){.panel{grid-template-columns:1fr}.row{grid-template-columns:50px 1fr}.row .arrow,.row .preview-wrap{display:none}}
+.stage{background:#08080a;border:1px solid var(--line);border-radius:16px;min-height:320px;display:flex;align-items:center;justify-content:center;padding:40px 20px;position:relative;overflow:hidden}
+.stage::before{content:'LIVE PREVIEW';position:absolute;top:16px;left:20px;font-size:10px;letter-spacing:.3em;color:var(--muted2)}
+#playText{font-size:clamp(48px,7vw,92px)}
+.side label{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted2);margin:20px 0 10px}
+.side label:first-child{margin-top:0}
+.side input[type=text]{width:100%;background:#08080a;border:1px solid var(--line);color:var(--cream);padding:16px 20px;border-radius:12px;font-size:16px;outline:none;font-family:inherit}
+.side input[type=text]:focus{border-color:var(--accent)}
+.range-row{display:flex;align-items:center;gap:14px;background:#08080a;border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.range-row input{flex:1;accent-color:var(--accent)}
+.range-row span{font-size:13px;color:var(--accent);min-width:44px;text-align:right}
+.code{background:#08080a;border:1px solid var(--line);border-radius:12px;padding:18px;font-family:ui-monospace,monospace;font-size:12px;line-height:1.7;color:#c9c5bb;overflow:auto;white-space:pre;margin-top:20px;max-height:180px}
+.side .btn-p{width:100%;margin-top:20px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:90px 5vw 36px;position:relative;z-index:1;max-width:1300px;margin:0 auto}
+.foot-big{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(56px,11vw,150px);letter-spacing:-.05em;line-height:.9}
+.foot-big em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--accent)}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:50px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--muted2);flex-wrap:wrap;gap:12px}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.reveal.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="mesh"></div>
+<div class="lines"></div>
+
+<nav>
+  <div class="logo">SPLIT2D<sup>®</sup></div>
+  <div class="menu"><a href="#work">Work</a><a href="#studio">Studio</a><a href="#play">Playground</a></div>
+  <button class="cta" onclick="document.getElementById('play').scrollIntoView({behavior:'smooth'})">Start a project</button>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">2D Character Split — <i>Edition N°01</i></div>
+  <div class="split2d hero-big wave" data-split>SPLIT</div>
+  <div class="hero-row">
+    <div class="split2d hero-big" data-split>2D®</div>
+    <div class="serif" style="font-size:clamp(48px,8vw,110px);line-height:.9;padding-bottom:8px">premium</div>
+    <div class="hero-sub">
+      <p><b>Top / bottom halves.</b> Har letter do hisson me kat-ta hai — hover par khulta hai. Editorial titles, hero headings aur brand marks ke liye.</p>
+      <div class="hero-actions">
+        <button class="btn-p" onclick="copyCode()">Copy code</button>
+        <button class="btn-s" onclick="document.getElementById('work').scrollIntoView({behavior:'smooth'})">See styles</button>
+      </div>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span><b>04</b> — Split variations</span>
+    <span><b>60fps</b> — GPU clipped halves</span>
+    <span><b>Zero</b> — Library, lightweight</span>
+    <span style="margin-left:auto">SCROLL ↓</span>
+  </div>
+</div>
+
+<div class="strip"><span>HERO TITLES</span><b>— Editorial</b><span>BRAND MARKS</span><b>— Intros</b><span>MOTION TYPE</span><b>— Portfolio</b><span style="margin-left:auto">EST. 2026</span></div>
+
+<section id="work">
+  <div class="sec-head reveal">
+    <div><div class="sec-num">01 — Variations</div><h2 class="sec-title">Four cuts,<br><em>one system.</em></h2></div>
+    <p class="sec-desc">Same structure, alag behaviour. Kisi bhi row par hover karo — live split dekho. Click karke playground me try karo.</p>
+  </div>
+  <div class="rows reveal">
+    <div class="row" onclick="setPlay('GOLD')"><small>01</small><div><h3>Classic — Vertical</h3><p>Top up / bottom down. Timeless editorial.</p></div><div class="preview m1" data-split>GOLD</div><div class="arrow">→</div></div>
+    <div class="row" onclick="setPlay('SLIDE')"><small>02</small><div><h3>Side — Horizontal</h3><p>Left / right me khulta hai. Wide banners ke liye.</p></div><div class="preview m2" data-split>SLIDE</div><div class="arrow">→</div></div>
+    <div class="row" onclick="setPlay('TILT')"><small>03</small><div><h3>Tilt — Playful</h3><p>Split + halka rotation. Youth brands ke liye.</p></div><div class="preview m3" data-split>TILT</div><div class="arrow">→</div></div>
+    <div class="row" onclick="setPlay('GLITCH')"><small>04</small><div><h3>Shade — Duo tone</h3><p>Champagne outline + soft RGB shade.</p></div><div class="preview m4" data-split>SHADE</div><div class="arrow">→</div></div>
+  </div>
+</section>
+
+<section id="play">
+  <div class="sec-head reveal">
+    <div><div class="sec-num">02 — Playground</div><h2 class="sec-title">Type it. <em>Split it.</em></h2></div>
+    <p class="sec-desc">Apna brand ya naam likho. Gap slider se opening control karo.</p>
+  </div>
+  <div class="panel reveal">
+    <div class="stage"><div class="split2d" id="playText" data-split>HELLO</div></div>
+    <div class="side">
+      <label>Your text</label>
+      <input type="text" id="inp" value="HELLO" maxlength="12" placeholder="Apna text..." />
+      <label>Split gap</label>
+      <div class="range-row"><input type="range" id="gap" min="0" max="28" value="10" /><span id="gapVal">10%</span></div>
+      <div class="code" id="codebox">&lt;div class="split2d" data-split&gt;HELLO&lt;/div&gt;
+
+.char2d{position:relative;display:inline-block;width:.71em;height:.98em}
+.half{position:absolute;inset:0}
+.top{clip-path:inset(-5% -5% 50% -5%)}
+.bottom{clip-path:inset(50% -5% -5% -5%)}</div>
+      <button class="btn-p" onclick="copyCode()">Copy code ⧉</button>
+    </div>
+  </div>
+</section>
+
+<footer id="studio">
+  <div class="sec-num">03 — Studio</div>
+  <div class="foot-big">Let's <em>split</em> it.</div>
+  <div class="foot-row"><span>SPLIT2D® — Character split system</span><span>Hover • Copy • Ship</span></div>
+</footer>
+
+<script>
+function split(el){
+  const txt = el.getAttribute('data-text') || el.textContent;
+  el.setAttribute('data-text', txt);
+  el.innerHTML='';
+  [...txt].forEach((ch,i)=>{
+    if(ch===' '){const s=document.createElement('span');s.className='space';el.appendChild(s);return}
+    const c=document.createElement('span');
+    c.className='char2d'+(el.classList.contains('wave')?' wave':'');
+    c.innerHTML=`<span class="half top">${ch}</span><span class="half bottom">${ch}</span>`;
+    c.querySelectorAll('.half').forEach(h=>h.style.animationDelay=(i*0.18)+'s');
+    el.appendChild(c);
+  });
+}
+document.querySelectorAll('[data-split]').forEach(split);
+
+const inp=document.getElementById('inp'), playText=document.getElementById('playText'),
+gap=document.getElementById('gap'), gapVal=document.getElementById('gapVal');
+function applyGap(){
+  const g=gap.value; gapVal.textContent=g+'%';
+  playText.querySelectorAll('.char2d').forEach(c=>{
+    c.onmouseenter=()=>{c.querySelector('.top').style.transform=`translateY(-${g}%)`;c.querySelector('.bottom').style.transform=`translateY(${g}%)`};
+    c.onmouseleave=()=>{c.querySelector('.top').style.transform='';c.querySelector('.bottom').style.transform=''};
+  });
+}
+inp.addEventListener('input',()=>{
+  playText.setAttribute('data-text', inp.value.toUpperCase()||' ');
+  playText.textContent = inp.value.toUpperCase()||' ';
+  split(playText); applyGap();
+});
+gap.addEventListener('input',applyGap); applyGap();
+function setPlay(t){ inp.value=t; inp.dispatchEvent(new Event('input')); document.getElementById('play').scrollIntoView({behavior:'smooth'}); }
+function copyCode(){
+  navigator.clipboard.writeText(document.getElementById('codebox').innerText).then(()=>alert('Code copy ho gaya.'));
+}
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
